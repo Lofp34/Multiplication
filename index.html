@@ -1,176 +1,396 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Entraînement aux Multiplications</title>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #2E3192, #1BFFFF);
-            color: white;
-        }
-        .container {
-            max-width: 500px;
-            margin: 50px auto;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-        button {
-            background: #FFC107;
-            color: black;
-            border: none;
-            padding: 12px 25px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-        button:hover {
-            background: #FF9800;
-        }
-        .result {
-            font-size: 20px;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-        input {
-            font-size: 18px;
-            padding: 10px;
-            text-align: center;
-            width: 80%;
-            max-width: 250px;
-            border-radius: 10px;
-            border: none;
-            outline: none;
-            margin-top: 10px;
-        }
-        .progress-container {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        .progress-bar {
-            height: 20px;
-            width: 0%;
-            background: #FFC107;
-            border-radius: 10px;
-            transition: width 0.5s;
-        }
-        .goal-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .goal-indicator {
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .error-popup {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 0, 0, 0.8);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            display: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 10;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Entraînement aux Multiplications</title>
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+  <!-- Chart.js pour les courbes -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Styles globaux */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #2E3192, #1BFFFF);
+      color: white;
+      min-height: 100vh;
+    }
+    /* Navigation par onglets */
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      padding: 10px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .tab-button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: color 0.3s ease, border-bottom 0.3s ease;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-button:hover, .tab-button.active {
+      color: #FFC107;
+      border-bottom: 3px solid #FFC107;
+    }
+    /* Conteneur principal des onglets */
+    .tab-content {
+      display: none;
+      padding: 20px;
+    }
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Container glassmorphisme */
+    .container {
+      max-width: 500px;
+      margin: 30px auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 16px;
+      display: block;
+      margin-top: 15px;
+    }
+    input[type="number"] {
+      font-size: 18px;
+      padding: 10px;
+      text-align: center;
+      width: 80%;
+      max-width: 250px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      margin-top: 10px;
+    }
+    button {
+      background: #FFC107;
+      color: black;
+      border: none;
+      padding: 12px 25px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #FF9800;
+    }
+    .result {
+      font-size: 20px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .progress-container {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 20px;
+      width: 0%;
+      background: #FFC107;
+      border-radius: 10px;
+      transition: width 0.5s;
+    }
+    .goal-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .goal-indicator {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .error-popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 0, 0, 0.8);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      display: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+    /* Statistiques / calendrier */
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .stats-table th,
+    .stats-table td {
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 8px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .stats-table th {
+      background: rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
 <body>
+  <!-- Navigation par onglets -->
+  <nav class="tab-nav">
+    <button class="tab-button active" id="btn-exercise" onclick="showTab('exerciseTab')">Entraînement</button>
+    <button class="tab-button" id="btn-stats" onclick="showTab('statsTab')">Statistiques</button>
+  </nav>
+
+  <!-- Onglet Entraînement -->
+  <div id="exerciseTab" class="tab-content active">
     <div class="container">
-        <h2>🚀 Apprends les Multiplications !</h2>
-        <label for="digits">Nombre de chiffres :</label>
-        <input type="number" id="digits" value="1" min="1" max="3" />
-        <button onclick="updateQuestion()">OK</button>
-        <p id="question"></p>
-        <input type="number" id="answer" placeholder="Ta réponse" />
-        <button onclick="checkAnswer()">Vérifier</button>
-        <p class="result" id="result"></p>
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <div class="goal-container">
-            <label for="goal">Objectif quotidien :</label>
-            <input type="number" id="goal" value="10" min="1" />
-            <button onclick="updateGoal()">Valider</button>
-        </div>
-        <p class="goal-indicator" id="goalIndicator">Objectif: 0/10</p>
-        <div id="errorPopup" class="error-popup"></div>
+      <h2>🚀 Apprends les Multiplications !</h2>
+      <label for="digits">Nombre de chiffres :</label>
+      <input type="number" id="digits" value="1" min="1" max="3" />
+      <button onclick="updateQuestion()">OK</button>
+      <p id="question"></p>
+      <input type="number" id="answer" placeholder="Ta réponse" />
+      <button onclick="checkAnswer()">Vérifier</button>
+      <p class="result" id="result"></p>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="goal-container">
+        <label for="goal">Objectif quotidien :</label>
+        <input type="number" id="goal" value="10" min="1" />
+        <button onclick="updateGoal()">Valider</button>
+      </div>
+      <p class="goal-indicator" id="goalIndicator">Objectif: 0/10</p>
+      <div id="errorPopup" class="error-popup"></div>
     </div>
-    <script>
-        let num1, num2, correctAnswer, correctCount = 0, dailyGoal = 10;
-        let dingSound = new Audio('https://www.myinstants.com/media/sounds/ding-sound-effect_2.mp3');
+  </div>
 
-        function getRandomNumber(digits) {
-            return Math.floor(Math.random() * (Math.pow(10, digits) - Math.pow(10, digits - 1))) + Math.pow(10, digits - 1);
-        }
+  <!-- Onglet Statistiques -->
+  <div id="statsTab" class="tab-content">
+    <div class="container">
+      <h2>📊 Statistiques Quotidiennes</h2>
+      <div id="calendar"></div>
+      <canvas id="progressChart" width="400" height="200"></canvas>
+    </div>
+  </div>
 
-        function updateQuestion() {
-            let digits = parseInt(document.getElementById("digits").value);
-            num1 = getRandomNumber(digits);
-            num2 = getRandomNumber(digits);
-            correctAnswer = num1 * num2;
-            document.getElementById("question").textContent = `Combien fait ${num1} × ${num2} ?`;
-            document.getElementById("answer").value = "";
-            document.getElementById("result").textContent = "";
-            document.getElementById("answer").focus();
-        }
+  <script>
+    /***** Fonctions de navigation par onglets *****/
+    function showTab(tabId) {
+      // Masquer tous les onglets et désactiver les boutons
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      // Afficher l'onglet choisi et activer son bouton
+      document.getElementById(tabId).classList.add('active');
+      if(tabId === 'exerciseTab') {
+        document.getElementById('btn-exercise').classList.add('active');
+      } else {
+        document.getElementById('btn-stats').classList.add('active');
+        // Au moment du passage sur l’onglet Statistiques, afficher le calendrier et la courbe
+        renderCalendar();
+        renderChart();
+      }
+    }
 
-        function checkAnswer() {
-            let userAnswer = parseInt(document.getElementById("answer").value);
-            if (userAnswer === correctAnswer) {
-                document.getElementById("result").textContent = "✔️ Correct ! Bien joué !";
-                document.getElementById("result").style.color = "lime";
-                correctCount++;
-                updateProgress();
-                dingSound.play();
-            } else {
-                let errorPercentage = Math.abs(((userAnswer - correctAnswer) / correctAnswer) * 100).toFixed(2);
-                showErrorPopup(`Erreur: ${errorPercentage}%`);
+    /***** Partie Entraînement *****/
+    let num1, num2, correctAnswer;
+    let correctCount = 0, dailyGoal = 10;
+    let dingSound = new Audio('https://www.myinstants.com/media/sounds/ding-sound-effect_2.mp3');
+
+    // Retourne un nombre aléatoire avec le nombre de chiffres souhaité
+    function getRandomNumber(digits) {
+      return Math.floor(Math.random() * (Math.pow(10, digits) - Math.pow(10, digits - 1))) + Math.pow(10, digits - 1);
+    }
+
+    // Génère une nouvelle question
+    function updateQuestion() {
+      let digits = parseInt(document.getElementById("digits").value);
+      num1 = getRandomNumber(digits);
+      num2 = getRandomNumber(digits);
+      correctAnswer = num1 * num2;
+      document.getElementById("question").textContent = `Combien fait ${num1} × ${num2} ?`;
+      document.getElementById("answer").value = "";
+      document.getElementById("result").textContent = "";
+      document.getElementById("answer").focus();
+    }
+
+    // Vérifie la réponse de l'utilisateur et met à jour les statistiques
+    function checkAnswer() {
+      let userAnswer = parseInt(document.getElementById("answer").value);
+      let isError = (userAnswer !== correctAnswer);
+      updateDailyStats(isError); // Mise à jour du suivi journalier
+
+      if (!isError) {
+        document.getElementById("result").textContent = "✔️ Correct ! Bien joué !";
+        document.getElementById("result").style.color = "lime";
+        correctCount++;
+        updateProgress();
+        dingSound.play();
+      } else {
+        let errorPercentage = Math.abs(((userAnswer - correctAnswer) / correctAnswer) * 100).toFixed(2);
+        showErrorPopup(`Erreur: ${errorPercentage}%`);
+      }
+      updateQuestion();
+    }
+
+    // Affiche une popup d'erreur de façon animée
+    function showErrorPopup(message) {
+      let popup = document.getElementById("errorPopup");
+      popup.textContent = message;
+      popup.style.display = "block";
+      setTimeout(() => { popup.style.display = "none"; }, 1000);
+    }
+
+    // Met à jour la barre de progression
+    function updateProgress() {
+      let goal = parseInt(document.getElementById("goal").value);
+      let progressPercentage = (correctCount / goal) * 100;
+      document.getElementById("progressBar").style.width = progressPercentage + "%";
+      document.getElementById("goalIndicator").textContent = `Objectif: ${correctCount}/${goal}`;
+    }
+
+    // Met à jour l'objectif quotidien et réinitialise le compteur de bonnes réponses
+    function updateGoal() {
+      dailyGoal = parseInt(document.getElementById("goal").value);
+      correctCount = 0;
+      updateProgress();
+    }
+
+    updateQuestion();
+
+    /***** Suivi des statistiques quotidiennes *****/
+    // Retourne la clé de la date du jour au format YYYY-MM-DD
+    function getTodayKey() {
+      let today = new Date();
+      return today.toISOString().split('T')[0];
+    }
+
+    // Met à jour les stats journalières dans le localStorage
+    function updateDailyStats(isError) {
+      let today = getTodayKey();
+      let stats = JSON.parse(localStorage.getItem("multiplicationStats")) || {};
+      if (!stats[today]) {
+        stats[today] = { total: 0, errors: 0 };
+      }
+      stats[today].total += 1;
+      if (isError) stats[today].errors += 1;
+      localStorage.setItem("multiplicationStats", JSON.stringify(stats));
+    }
+
+    // Affiche un tableau récapitulatif (calendrier simplifié) des stats
+    function renderCalendar() {
+      let stats = JSON.parse(localStorage.getItem("multiplicationStats")) || {};
+      let calendarDiv = document.getElementById("calendar");
+      calendarDiv.innerHTML = ""; // réinitialise le contenu
+
+      let table = document.createElement("table");
+      table.className = "stats-table";
+      let header = document.createElement("tr");
+      header.innerHTML = "<th>Date</th><th>Multiplications</th><th>Erreurs</th><th>Taux d'erreur</th>";
+      table.appendChild(header);
+
+      let dates = Object.keys(stats).sort();
+      dates.forEach(date => {
+        let row = document.createElement("tr");
+        let total = stats[date].total;
+        let errors = stats[date].errors;
+        let errorRate = total > 0 ? ((errors / total) * 100).toFixed(2) + "%" : "0%";
+        row.innerHTML = `<td>${date}</td><td>${total}</td><td>${errors}</td><td>${errorRate}</td>`;
+        table.appendChild(row);
+      });
+      calendarDiv.appendChild(table);
+    }
+
+    // Affiche une courbe de progression à l'aide de Chart.js
+    function renderChart() {
+      let stats = JSON.parse(localStorage.getItem("multiplicationStats")) || {};
+      let dates = Object.keys(stats).sort();
+      let totals = dates.map(date => stats[date].total);
+      let errorRates = dates.map(date => stats[date].total > 0 ? (stats[date].errors / stats[date].total) * 100 : 0);
+
+      let ctx = document.getElementById("progressChart").getContext("2d");
+      // Détruire le graphique précédent le cas échéant
+      if (window.myChart instanceof Chart) {
+        window.myChart.destroy();
+      }
+      window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [
+            {
+              label: 'Multiplications',
+              data: totals,
+              borderColor: '#FFC107',
+              backgroundColor: 'rgba(255, 193, 7, 0.2)',
+              fill: true,
+              tension: 0.4
+            },
+            {
+              label: "Taux d'erreur (%)",
+              data: errorRates,
+              borderColor: '#FF5722',
+              backgroundColor: 'rgba(255, 87, 34, 0.2)',
+              fill: true,
+              tension: 0.4,
+              yAxisID: 'y1'
             }
-            updateQuestion();
+          ]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Multiplications' }
+            },
+            y1: {
+              beginAtZero: true,
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              title: { display: true, text: "Taux d'erreur (%)" }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { color: 'white' }
+            }
+          }
         }
-
-        function showErrorPopup(message) {
-            let popup = document.getElementById("errorPopup");
-            popup.textContent = message;
-            popup.style.display = "block";
-            setTimeout(() => { popup.style.display = "none"; }, 1000);
-        }
-
-        function updateProgress() {
-            let goal = parseInt(document.getElementById("goal").value);
-            let progressPercentage = (correctCount / goal) * 100;
-            document.getElementById("progressBar").style.width = progressPercentage + "%";
-            document.getElementById("goalIndicator").textContent = `Objectif: ${correctCount}/${goal}`;
-        }
-
-        function updateGoal() {
-            dailyGoal = parseInt(document.getElementById("goal").value);
-            correctCount = 0;
-            updateProgress();
-        }
-
-        updateQuestion();
-    </script>
+      });
+    }
+  </script>
 </body>
 </html>
